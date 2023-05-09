@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gdsc_flutter_camp_2023_app_dos/src/presentation/widgets/welcome.dart';
 
@@ -46,7 +48,7 @@ class _AnimationWidget extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Lottie.asset(
               'assets/animations/beers.json',
             ),
