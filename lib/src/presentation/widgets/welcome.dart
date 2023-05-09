@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:gdsc_flutter_camp_2023_app_dos/src/presentation/widgets/custom_widget.dart';
+import 'package:flutter/material.dart';
 
 class WelcomeWidget extends StatelessWidget {
   const WelcomeWidget({
@@ -12,7 +12,7 @@ class WelcomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 70),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       height: size * 0.4,
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -59,7 +59,7 @@ class WelcomeWidget extends StatelessWidget {
                 },
               ),
               const SizedBox(
-                width: 25,
+                width: 20,
               ),
               CustomButton(
                 text: 'Sign Up',
