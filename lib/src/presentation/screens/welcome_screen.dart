@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:gdsc_flutter_camp_2023_app_dos/src/presentation/widgets/welcome.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,6 @@ class _CustomBody extends StatelessWidget {
 
 class _AnimationWidget extends StatelessWidget {
   const _AnimationWidget({
-    super.key,
     required this.size,
   });
 
@@ -48,7 +46,7 @@ class _AnimationWidget extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Lottie.asset(
               'assets/animations/beers.json',
             ),

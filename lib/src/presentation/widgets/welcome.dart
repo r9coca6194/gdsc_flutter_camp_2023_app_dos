@@ -12,7 +12,7 @@ class WelcomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 70),
       height: size * 0.4,
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -59,7 +59,7 @@ class WelcomeWidget extends StatelessWidget {
                 },
               ),
               const SizedBox(
-                width: 20,
+                width: 25,
               ),
               CustomButton(
                 text: 'Sign Up',

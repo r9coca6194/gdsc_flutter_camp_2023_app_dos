@@ -1,4 +1,7 @@
+import 'package:gdsc_flutter_camp_2023_app_dos/src/presentation/screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -8,7 +11,32 @@ class LoginScreen extends StatelessWidget {
     TextEditingController email = TextEditingController();
     TextEditingController password = TextEditingController();
 
-    final _formKey = GlobalKey<FormState>();
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    // User? user1;
+
+    loginWithsGoogle() async {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+      final AuthCredential authCredential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await firebaseAuth.signInWithCredential(authCredential);
+        print(userCredential.user);
+        return userCredential;
+      } catch (e) {
+        print(e);
+        return null;
+      }
+    }
+
+    final formKey = GlobalKey<FormState>();
 
     final size = MediaQuery.of(context).size;
 
@@ -88,7 +116,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Form(
-                    key: _formKey,
+                    key: formKey,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 70, horizontal: 20),
@@ -119,7 +147,7 @@ class LoginScreen extends StatelessWidget {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   print("INICIO DE SESION EXITOSO");
                                   print(email.text);
                                   print(password.text);
@@ -144,12 +172,75 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _googleButton(),
-                  SizedBox(
+                  // _googleButton(),
+                  _googleButton(
+                    loginWithsGoogle,
+                    context,
+                    firebaseAuth,
+                    googleSignIn,
+                  ),
+
+                  const SizedBox(
                     height: 20,
                   ),
                   _facebookButton()
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SizedBox _googleButton(Future<UserCredential?> Function() loginWithsGoogle,
+      BuildContext context, FirebaseAuth auth, GoogleSignIn googleSignIn) {
+    return SizedBox(
+      width: 350,
+      child: ElevatedButton(
+        onPressed: () async {
+          UserCredential? userCredentialFinal = await loginWithsGoogle();
+          if (userCredentialFinal != null) {
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              //TODO: Quitar todas las pantallas
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                  user: userCredentialFinal.user,
+                  auth: auth,
+                  googleSignIn: googleSignIn,
+                ),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Row(
+          children: [
+            Image.network(
+              'https://rotulosmatesanz.com/wp-content/uploads/2017/09/2000px-Google_G_Logo.svg_.png',
+              width: 35,
+              height: 35,
+            ),
+            const Spacer(),
+            const Text(
+              "Cotinue with Google",
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.arrow_forward_outlined,
+                color: Colors.black,
               ),
             ),
           ],
@@ -170,7 +261,7 @@ class LoginScreen extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(40),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 5,
@@ -237,49 +328,6 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Container _googleButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 30,
-      ),
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Row(
-          children: [
-            Image.network(
-              'https://rotulosmatesanz.com/wp-content/uploads/2017/09/2000px-Google_G_Logo.svg_.png',
-              width: 35,
-              height: 35,
-            ),
-            const Spacer(),
-            const Text(
-              "Cotinue with Google",
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.arrow_forward_outlined,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   TextFormField _password(TextEditingController val) {
     return TextFormField(
       controller: val,
@@ -287,6 +335,7 @@ class LoginScreen extends StatelessWidget {
         if (value!.isEmpty) {
           return 'Este campo es obligatorio';
         }
+        return null;
         // if (value.length < 6) {
         //   return 'Minimo 6 Caracteres';
         // }
